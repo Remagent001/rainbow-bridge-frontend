@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rainbow Bridge Memorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #c9a96e;
+    --gold-light: #e8d5a3;
+    --cream: #fdf8f0;
+    --dark: #1a1410;
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bg {
+    position: fixed; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse at 50% 0%, #3a2a1a 0%, #1a1410 60%);
+    overflow: hidden;
+  }
+
+  .bg::before {
+    content: '';
+    position: absolute; top: -50%; left: -20%;
+    width: 140%; height: 120%;
+    background: conic-gradient(from 180deg at 50% 30%,
+      transparent 0deg, rgba(201,169,110,0.04) 30deg,
+      rgba(255,200,100,0.08) 60deg, rgba(201,169,110,0.04) 90deg,
+      transparent 120deg, rgba(150,100,200,0.03) 180deg,
+      transparent 210deg, rgba(201,169,110,0.05) 270deg, transparent 360deg);
+    animation: rotate 30s linear infinite;
+  }
+
+  .rainbow-arc {
+    position: absolute; bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 200%; height: 60vh;
+    border-radius: 50% 50% 0 0;
+    background: linear-gradient(180deg,
+      rgba(255,100,100,0.03) 0%, rgba(255,165,0,0.04) 15%,
+      rgba(255,255,0,0.03) 30%, rgba(100,200,100,0.04) 45%,
+      rgba(100,150,255,0.04) 60%, rgba(150,100,255,0.03) 75%, transparent 100%);
+    filter: blur(20px);
+    animation: pulse 8s ease-in-out infinite;
+  }
+
+  .stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 8%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 85% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 5%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 90% 45%, rgba(255,255,255,0.25) 0%, transparent 100%);
+  }
+
+  @keyframes rotate { to { transform: rotate(360deg); } }
+  @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+  @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .container {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 520px;
+    padding: 2rem;
+    animation: fadeUp 1.2s ease both;
+  }
+
+  .header { text-align: center; margin-bottom: 2.5rem; }
+
+  .rainbow-emoji {
+    font-size: 2.5rem; display: block;
+    margin-bottom: 1.5rem;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    line-height: 1.2; letter-spacing: 0.02em;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-light) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    animation: shimmer 4s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 1.05rem;
+    color: rgba(253,248,240,0.55); line-height: 1.7;
+    max-width: 360px; margin: 0 auto;
+  }
+
+  .tabs {
+    display: flex; margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(201,169,110,0.2);
+  }
+
+  .tab {
+    flex: 1; padding: 0.75rem;
+    background: none; border: none;
+    color: rgba(253,248,240,0.4);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.12em;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.3s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .form-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,169,110,0.15);
+    border-radius: 2px; padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Drag and drop upload area */
+  .upload-btn-wrap { margin-bottom: 1.5rem; }
+
+  .upload-btn {
+    width: 100%; padding: 1.5rem;
+    border: 1px dashed rgba(201,169,110,0.35);
+    border-radius: 2px;
+    background: rgba(201,169,110,0.02);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem; cursor: pointer;
+    transition: all 0.3s; text-align: center; display: block;
+    -webkit-appearance: none;
+  }
+
+  .upload-btn:hover, .upload-btn.drag-over {
+    border-color: var(--gold);
+    background: rgba(201,169,110,0.08);
+    transform: scale(1.01);
+  }
+
+  .upload-btn-icon { font-size: 1.8rem; display: block; margin-bottom: 0.5rem; }
+  .upload-btn-label { color: var(--gold-light); display: block; margin-bottom: 0.2rem; font-size: 0.9rem; }
+  .upload-btn-sub { color: rgba(253,248,240,0.4); font-size: 0.78rem; }
+
+  #fileInput { display: none; }
+
+  .preview-wrap {
+    display: none; position: relative;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(201,169,110,0.3);
+    border-radius: 2px; overflow: hidden;
+  }
+
+  .preview-wrap img { width: 100%; max-height: 220px; object-fit: cover; display: block; }
+
+  .preview-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,20,16,0.8) 0%, transparent 50%);
+    display: flex; align-items: flex-end; padding: 1rem;
+  }
+
+  .change-btn {
+    font-family: 'Jost', sans-serif; font-size: 0.72rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); background: none;
+    border: 1px solid rgba(201,169,110,0.4);
+    padding: 0.35rem 0.8rem; cursor: pointer; transition: all 0.3s;
+  }
+
+  .input-group { margin-bottom: 1.25rem; }
+
+  label {
+    display: block; font-size: 0.72rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(201,169,110,0.7); margin-bottom: 0.5rem;
+  }
+
+  input[type="text"], input[type="email"] {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,169,110,0.2);
+    border-radius: 2px; padding: 0.8rem 1rem;
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.95rem; font-weight: 300;
+    transition: border-color 0.3s; outline: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="text"]:focus, input[type="email"]:focus { border-color: rgba(201,169,110,0.6); }
+  input::placeholder { color: rgba(253,248,240,0.2); }
+
+  .submit-btn {
+    width: 100%; padding: 0.95rem;
+    background: linear-gradient(135deg, #c9a96e, #a07840, #c9a96e);
+    background-size: 200% auto;
+    border: none; border-radius: 2px;
+    color: var(--dark);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem; font-weight: 400;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.4s ease;
+    -webkit-appearance: none;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background-position: right center;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 30px rgba(201,169,110,0.25);
+  }
+
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .secondary-btn {
+    width: 100%; padding: 0.85rem;
+    background: none;
+    border: 1px solid rgba(201,169,110,0.3); border-radius: 2px;
+    color: var(--gold);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem; font-weight: 400;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+    margin-top: 0.75rem;
+  }
+
+  .secondary-btn:hover { background: rgba(201,169,110,0.08); border-color: var(--gold); }
+
+  .loading { display: none; text-align: center; padding: 2rem 0; }
+
+  .loading-spinner {
+    width: 36px; height: 36px;
+    border: 2px solid rgba(201,169,110,0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  .loading-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; color: rgba(253,248,240,0.5); font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .loading-subtext { font-size: 0.75rem; color: rgba(253,248,240,0.3); }
+
+  .success { display: none; text-align: center; padding: 1rem 0; }
+
+  .success-icon {
+    font-size: 3rem; display: block; margin-bottom: 1rem;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .success h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300; font-size: 1.6rem;
+    color: var(--gold-light); margin-bottom: 0.75rem;
+  }
+
+  .success p { font-size: 0.85rem; color: rgba(253,248,240,0.5); line-height: 1.7; }
+
+  .video-wrap {
+    display: none; margin-top: 1.5rem;
+    border: 1px solid rgba(201,169,110,0.3);
+    border-radius: 2px; overflow: hidden;
+  }
+
+  .video-wrap video { width: 100%; display: block; max-height: 500px; }
+
+  .video-actions {
+    padding: 0.75rem; display: flex; gap: 0.5rem;
+    background: rgba(201,169,110,0.05);
+  }
+
+  .video-btn {
+    flex: 1; padding: 0.6rem; background: none;
+    border: 1px solid rgba(201,169,110,0.3); border-radius: 2px;
+    color: var(--gold); font-family: 'Jost', sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.3s; text-decoration: none;
+    text-align: center; display: block;
+  }
+
+  .video-btn:hover { background: rgba(201,169,110,0.1); border-color: var(--gold); }
+
+  .access-code {
+    margin-top: 1.5rem; padding: 1rem;
+    background: rgba(201,169,110,0.07);
+    border: 1px solid rgba(201,169,110,0.2);
+    border-radius: 2px; text-align: center;
+  }
+
+  .access-code-label {
+    font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(201,169,110,0.6);
+    margin-bottom: 0.4rem;
+  }
+
+  .access-code-value {
+    font-size: 1.4rem; letter-spacing: 0.3em;
+    color: var(--gold-light); font-family: 'Cormorant Garamond', serif;
+  }
+
+  /* History section */
+  .history-section {
+    display: none; margin-top: 2rem;
+    border-top: 1px solid rgba(201,169,110,0.15);
+    padding-top: 1.5rem;
+  }
+
+  .history-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; color: rgba(201,169,110,0.7);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 1rem; text-align: center;
+  }
+
+  .history-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .history-item {
+    border: 1px solid rgba(201,169,110,0.15);
+    border-radius: 2px; overflow: hidden;
+    background: rgba(255,255,255,0.02);
+    cursor: pointer; transition: border-color 0.3s;
+  }
+
+  .history-item:hover { border-color: rgba(201,169,110,0.4); }
+
+  .history-item video {
+    width: 100%; display: block;
+    max-height: 160px; object-fit: cover;
+    pointer-events: none;
+  }
+
+  .history-item-info {
+    padding: 0.5rem 0.6rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .history-episode {
+    font-size: 0.68rem; color: var(--gold);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  .history-play {
+    font-size: 0.68rem; color: rgba(253,248,240,0.35);
+    letter-spacing: 0.05em;
+  }
+
+  /* Returning user - history-only view */
+  .history-view { display: none; text-align: center; padding: 1rem 0; }
+  .history-view h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300; font-size: 1.5rem;
+    color: var(--gold-light); margin-bottom: 0.5rem;
+  }
+  .history-view p { font-size: 0.85rem; color: rgba(253,248,240,0.5); margin-bottom: 1.5rem; }
+
+  /* Modal */
+  .modal {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.92);
+    align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+
+  .modal.open { display: flex; }
+
+  .modal-inner {
+    width: 100%; max-width: 400px; position: relative;
+  }
+
+  .modal-inner video {
+    width: 100%; border-radius: 2px; display: block;
+    max-height: 80vh;
+  }
+
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.75rem 0; margin-bottom: 0.5rem;
+  }
+
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; color: var(--gold-light);
+  }
+
+  .modal-close {
+    background: none; border: none; color: rgba(253,248,240,0.4);
+    font-size: 1.5rem; cursor: pointer; padding: 0 0.25rem;
+    line-height: 1;
+  }
+
+  .modal-close:hover { color: var(--cream); }
+
+  .modal-actions {
+    display: flex; gap: 0.5rem; margin-top: 0.75rem;
+  }
+
+  .error-msg {
+    display: none; padding: 0.75rem 1rem;
+    background: rgba(200,80,80,0.1);
+    border: 1px solid rgba(200,80,80,0.3);
+    border-radius: 2px; font-size: 0.82rem;
+    color: #e08080; margin-top: 1rem; line-height: 1.5;
+  }
+
+  .footer-note {
+    text-align: center; margin-top: 2rem;
+    font-size: 0.72rem; color: rgba(253,248,240,0.25);
+    letter-spacing: 0.05em; line-height: 1.8;
+  }
+
+  .checkin-again-btn {
+    margin-top: 1.5rem; width: 100%; padding: 0.8rem;
+    background: none; border: 1px solid rgba(201,169,110,0.3);
+    border-radius: 2px; color: var(--gold);
+    font-family: 'Jost', sans-serif; font-size: 0.75rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+  }
+
+  .checkin-again-btn:hover { background: rgba(201,169,110,0.08); }
+
+  /* Credit badge */
+  .credit-badge {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: rgba(201,169,110,0.1);
+    border: 1px solid rgba(201,169,110,0.25);
+    border-radius: 20px; padding: 0.3rem 0.8rem;
+    font-size: 0.75rem; letter-spacing: 0.08em;
+    color: var(--gold); margin-bottom: 1rem;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .credit-badge:hover { background: rgba(201,169,110,0.18); }
+  .credit-badge-zero { border-color: rgba(200,80,80,0.4); color: #e08080; background: rgba(200,80,80,0.08); }
+
+  /* Paywall overlay */
+  .paywall-modal {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.92);
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .paywall-modal.open { display: flex; }
+  .paywall-inner {
+    width: 100%; max-width: 460px;
+    background: #1e1810; border: 1px solid rgba(201,169,110,0.25);
+    border-radius: 4px; padding: 2rem; position: relative;
+  }
+  .paywall-inner h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300; font-size: 1.6rem;
+    color: var(--gold-light); margin-bottom: 0.5rem; text-align: center;
+  }
+  .paywall-inner p {
+    font-size: 0.85rem; color: rgba(253,248,240,0.5);
+    text-align: center; margin-bottom: 1.5rem; line-height: 1.6;
+  }
+  .pack-options { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem; }
+  .pack-option {
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(201,169,110,0.2);
+    border-radius: 2px; cursor: pointer;
+    transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.02);
+  }
+  .pack-option:hover, .pack-option.selected {
+    border-color: var(--gold); background: rgba(201,169,110,0.08);
+  }
+  .pack-option-label { font-size: 0.9rem; color: var(--cream); }
+  .pack-option-sublabel { font-size: 0.72rem; color: rgba(201,169,110,0.6); margin-top: 0.15rem; }
+  .pack-option-price { font-size: 1.1rem; color: var(--gold); font-family: 'Cormorant Garamond', serif; }
+  .paywall-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: none; border: none; color: rgba(253,248,240,0.4);
+    font-size: 1.5rem; cursor: pointer; line-height: 1;
+  }
+  .paywall-close:hover { color: var(--cream); }
+
+  /* Settings modal */
+  .settings-modal {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.92);
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .settings-modal.open { display: flex; }
+  .settings-inner {
+    width: 100%; max-width: 400px;
+    background: #1e1810; border: 1px solid rgba(201,169,110,0.25);
+    border-radius: 4px; padding: 2rem; position: relative;
+  }
+  .settings-inner h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300; font-size: 1.4rem;
+    color: var(--gold-light); margin-bottom: 1.5rem;
+  }
+  .toggle-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.75rem 0; border-bottom: 1px solid rgba(201,169,110,0.1);
+    margin-bottom: 0.75rem;
+  }
+  .toggle-label { font-size: 0.85rem; color: var(--cream); }
+  .toggle-sub { font-size: 0.72rem; color: rgba(253,248,240,0.35); margin-top: 0.2rem; }
+  .toggle-switch {
+    position: relative; width: 44px; height: 24px;
+    background: rgba(255,255,255,0.1); border-radius: 12px;
+    cursor: pointer; transition: background 0.3s; flex-shrink: 0;
+    border: 1px solid rgba(201,169,110,0.2);
+  }
+  .toggle-switch.on { background: rgba(201,169,110,0.5); border-color: var(--gold); }
+  .toggle-switch::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--cream); transition: transform 0.3s;
+  }
+  .toggle-switch.on::after { transform: translateX(20px); }
+  .settings-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: none; border: none; color: rgba(253,248,240,0.4);
+    font-size: 1.5rem; cursor: pointer; line-height: 1;
+  }
+  .settings-close:hover { color: var(--cream); }
+  .settings-save-msg { font-size: 0.78rem; color: var(--gold); text-align: center; margin-top: 0.5rem; display: none; }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="stars"></div>
+  <div class="rainbow-arc"></div>
+</div>
+
+<!-- Video modal -->
+<div class="modal" id="videoModal" onclick="closeModal(event)">
+  <div class="modal-inner">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle"></span>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <video id="modalVideo" controls playsinline></video>
+    <div class="modal-actions">
+      <a class="video-btn" id="modalDownload" href="#" download>Download</a>
+      <a class="video-btn" id="modalShare" href="#" target="_blank">Open in Browser</a>
+    </div>
+  </div>
+</div>
+
+<!-- Paywall Modal -->
+<div class="paywall-modal" id="paywallModal">
+  <div class="paywall-inner">
+    <button class="paywall-close" onclick="closePaywall()">✕</button>
+    <span style="font-size:2rem;display:block;text-align:center;margin-bottom:0.75rem;">🌈</span>
+    <h2>Get More Moments</h2>
+    <p>Choose a video pack to continue creating memories with your beloved companion.</p>
+
+    <div class="pack-options">
+      <div class="pack-option" id="pack-5" onclick="selectPack(5)">
+        <div>
+          <div class="pack-option-label">5 Videos</div>
+          <div class="pack-option-sublabel">$2.00 per video</div>
+        </div>
+        <div class="pack-option-price">$9.99</div>
+      </div>
+      <div class="pack-option" id="pack-17" onclick="selectPack(17)">
+        <div>
+          <div class="pack-option-label">17 Videos <span style="font-size:0.7rem;color:var(--gold);margin-left:0.4rem;">2 FREE</span></div>
+          <div class="pack-option-sublabel">$1.76 per video</div>
+        </div>
+        <div class="pack-option-price">$29.99</div>
+      </div>
+      <div class="pack-option" id="pack-60" onclick="selectPack(60)">
+        <div>
+          <div class="pack-option-label">60 Videos <span style="font-size:0.7rem;color:var(--gold);margin-left:0.4rem;">10 FREE</span></div>
+          <div class="pack-option-sublabel">$1.67 per video</div>
+        </div>
+        <div class="pack-option-price">$99.99</div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="checkoutBtn" type="button" onclick="startCheckout()" disabled>
+      Continue to Payment
+    </button>
+    <div class="error-msg" id="paywallError"></div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="settings-modal" id="settingsModal">
+  <div class="settings-inner">
+    <button class="settings-close" onclick="closeSettings()">✕</button>
+    <h2>⚙️ Account Settings</h2>
+
+    <div class="input-group">
+      <label>Email address</label>
+      <input type="email" id="settingsEmail" placeholder="your@email.com">
+    </div>
+
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">Auto-renew</div>
+        <div class="toggle-sub">When you have 1 video left, we'll send you a renewal link for the same pack.</div>
+      </div>
+      <div class="toggle-switch" id="autoRenewToggle" onclick="toggleAutoRenew()"></div>
+    </div>
+
+    <button class="submit-btn" type="button" style="margin-top:1rem;" onclick="saveSettings()">Save Changes</button>
+    <div class="settings-save-msg" id="settingsSaveMsg">✓ Settings saved</div>
+    <div class="error-msg" id="settingsError"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <span class="rainbow-emoji">🌈</span>
+    <h1>A Tribute Across<br>the Rainbow Bridge</h1>
+    <p class="subtitle">A place where joy returns, tails wag again,<br>and love never fades.</p>
+  </div>
+
+  <div class="form-card">
+
+    <div class="tabs">
+      <button class="tab active" id="tab-btn-new" onclick="switchTab('new', this)">My Pet Just Arrived</button>
+      <button class="tab" id="tab-btn-returning" onclick="switchTab('returning', this)">Check In On My Pet</button>
+    </div>
+
+    <!-- NEW PET TAB -->
+    <div class="tab-content active" id="tab-new">
+      <div id="newFormArea">
+        <!-- Drag & Drop Upload Area -->
+        <input type="file" id="fileInput" accept="image/*">
+        <div class="upload-btn-wrap" id="uploadBtnWrap">
+          <div class="upload-btn" id="dropZone"
+            onclick="document.getElementById('fileInput').click()"
+            ondragover="handleDragOver(event)"
+            ondragleave="handleDragLeave(event)"
+            ondrop="handleDrop(event)">
+            <span class="upload-btn-icon">🐾</span>
+            <span class="upload-btn-label">Add a photo of your companion</span>
+            <span class="upload-btn-sub">Drag & drop or tap to choose from your photos</span>
+          </div>
+        </div>
+
+        <div class="preview-wrap" id="previewWrap">
+          <img id="previewImg" src="" alt="Your pet">
+          <div class="preview-overlay">
+            <button class="change-btn" type="button" onclick="document.getElementById('fileInput').click()">Change Photo</button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="petNameInput">Your pet's name</label>
+          <input type="text" id="petNameInput" placeholder="Buddy, Luna, Max..." oninput="checkReady()">
+        </div>
+
+        <div class="input-group">
+          <label for="emailInput">Your email address</label>
+          <input type="email" id="emailInput" placeholder="your@email.com" oninput="checkReady(); saveEmail(this.value)">
+        </div>
+
+        <button class="submit-btn" id="submitBtn" type="button" onclick="submitNewPet()" disabled>
+          Create Memorial
+        </button>
+
+        <div class="error-msg" id="newErrorMsg"></div>
+      </div>
+
+      <div class="loading" id="newLoading">
+        <div class="loading-spinner"></div>
+        <p class="loading-text" id="newLoadingText">Preparing your tribute…</p>
+        <p class="loading-subtext" id="newLoadingStatus">Uploading photo…</p>
+      </div>
+
+      <div class="success" id="newSuccess">
+        <span class="success-icon">🐾</span>
+        <h2 id="newSuccessTitle">Your pet has arrived 🌈</h2>
+        <p>We've also sent this video to your email.</p>
+
+        <div class="video-wrap" id="newVideoWrap">
+          <video id="newVideo" controls playsinline></video>
+          <div class="video-actions">
+            <a class="video-btn" id="newVideoDownload" href="#" download>Download</a>
+            <a class="video-btn" id="newVideoShare" href="#" target="_blank">Open in Browser</a>
+          </div>
+        </div>
+
+        <div class="access-code">
+          <div class="access-code-label">Your Access Code</div>
+          <div class="access-code-value" id="accessCodeDisplay"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RETURNING USER TAB -->
+    <div class="tab-content" id="tab-returning">
+
+      <!-- Step 1: Email entry -->
+      <div id="returningFormArea">
+        <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(253,248,240,0.5);margin-bottom:1.5rem;font-size:1rem;line-height:1.6;">
+          Enter your email to see all of your pet's memories.
+        </p>
+
+        <div class="input-group">
+          <label for="returningEmail">Your email address</label>
+          <input type="email" id="returningEmail" placeholder="your@email.com" oninput="saveEmail(this.value)">
+        </div>
+
+        <button class="submit-btn" type="button" onclick="viewHistory()">
+          See My Pet's Memories
+        </button>
+
+        <div class="error-msg" id="returningErrorMsg"></div>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading" id="returningLoading">
+        <div class="loading-spinner"></div>
+        <p class="loading-text" id="returningLoadingText">Finding your beloved companion…</p>
+        <p class="loading-subtext" id="returningLoadingStatus">Just a moment…</p>
+      </div>
+
+      <!-- History-only view (shown immediately after email lookup) -->
+      <div class="history-view" id="returningHistoryView">
+        <span class="success-icon">🐾</span>
+        <h2 id="returningPetTitle">All Memories</h2>
+        <p id="returningPetSubtitle">Every moment, saved forever.</p>
+
+        <div style="display:flex;justify-content:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;">
+          <div class="credit-badge" id="creditBadge" onclick="openPaywall()">🎬 <span id="creditCount">0</span> videos remaining</div>
+          <div class="credit-badge" style="cursor:pointer;" onclick="openSettings()">⚙️ Settings</div>
+        </div>
+
+        <div class="history-section" id="historySectionMain" style="display:block; border-top:none; padding-top:0; margin-top:0;">
+          <div class="history-grid" id="historyGridMain"></div>
+        </div>
+
+        <div id="generateBtnArea">
+          <button class="submit-btn" type="button" style="margin-top:1.5rem;" id="generateNewBtn" onclick="submitCheckin()">
+            Generate a New Moment ✨
+          </button>
+          <div id="noCreditsMsg" style="display:none;margin-top:1rem;text-align:center;">
+            <p style="font-size:0.85rem;color:rgba(253,248,240,0.5);margin-bottom:0.75rem;">You've used all your videos.</p>
+            <button class="submit-btn" type="button" onclick="openPaywall()">Get More Videos 🌈</button>
+          </div>
+        </div>
+
+        <button class="checkin-again-btn" onclick="resetReturning()">Use a Different Email</button>
+      </div>
+
+      <!-- New video loading (after "Generate New Moment") -->
+      <div class="loading" id="newMomentLoading" style="display:none;">
+        <div class="loading-spinner"></div>
+        <p class="loading-text" id="newMomentLoadingText">A new moment is being created…</p>
+        <p class="loading-subtext">This usually takes 2–3 minutes</p>
+      </div>
+
+      <!-- New video success -->
+      <div class="success" id="returningSuccess">
+        <span class="success-icon">🐾</span>
+        <h2 id="returningSuccessTitle">Here's your new moment</h2>
+        <p>We've also sent this video to your email.</p>
+
+        <div class="video-wrap" id="returningVideoWrap">
+          <video id="returningVideo" controls playsinline></video>
+          <div class="video-actions">
+            <a class="video-btn" id="returningVideoDownload" href="#" download>Download</a>
+            <a class="video-btn" id="returningVideoShare" href="#" target="_blank">Open in Browser</a>
+          </div>
+        </div>
+
+        <div class="history-section" id="historySection">
+          <div class="history-title">All Memories</div>
+          <div class="history-grid" id="historyGrid"></div>
+        </div>
+
+        <button class="checkin-again-btn" onclick="resetReturning()">Back to Memories</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <p class="footer-note">
+    Your photo and email are used only to create your memorial video.<br>
+    We handle your memories with care and respect.
+  </p>
+</div>
+
+<script>
+  const API_BASE = 'https://api.theywaitwithlove.com';
+  const API_KEY = 'k3ith-ptv-2026-VERY-LONG-RANDOM-STRING-rider2026';
+
+  let selectedFile = null;
+  let currentEmail = '';
+  let currentPetName = '';
+  let currentJobId = null;
+  let currentCredits = 0;
+  let currentAutoRenew = true;
+  let selectedPackSize = null;
+  let pendingDiscount = 0;
+
+  // ── Email persistence ──────────────────────────────────────────
+  function saveEmail(val) {
+    if (val && val.includes('@')) {
+      localStorage.setItem('rb_email', val);
+      currentEmail = val;
+    }
+  }
+
+  function loadSavedEmail() {
+    const saved = localStorage.getItem('rb_email');
+    if (saved) {
+      document.getElementById('emailInput').value = saved;
+      document.getElementById('returningEmail').value = saved;
+      currentEmail = saved;
+      checkReady();
+    }
+  }
+
+  // ── Credits UI ─────────────────────────────────────────────────
+  function updateCreditBadge(credits) {
+    currentCredits = credits;
+    const badge = document.getElementById('creditBadge');
+    const countEl = document.getElementById('creditCount');
+    const generateBtn = document.getElementById('generateNewBtn');
+    const noCreditsMsg = document.getElementById('noCreditsMsg');
+
+    if (countEl) countEl.textContent = credits;
+
+    if (badge) {
+      badge.className = 'credit-badge' + (credits === 0 ? ' credit-badge-zero' : '');
+    }
+
+    if (generateBtn && noCreditsMsg) {
+      if (credits > 0) {
+        generateBtn.style.display = 'block';
+        noCreditsMsg.style.display = 'none';
+      } else {
+        generateBtn.style.display = 'none';
+        noCreditsMsg.style.display = 'block';
+      }
+    }
+  }
+
+  // ── Paywall ────────────────────────────────────────────────────
+  function openPaywall() {
+    document.getElementById('paywallModal').classList.add('open');
+    document.getElementById('paywallError').style.display = 'none';
+    selectedPackSize = null;
+    document.querySelectorAll('.pack-option').forEach(el => el.classList.remove('selected'));
+    document.getElementById('checkoutBtn').disabled = true;
+  }
+
+  function closePaywall() {
+    document.getElementById('paywallModal').classList.remove('open');
+  }
+
+  function selectPack(size) {
+    selectedPackSize = size;
+    document.querySelectorAll('.pack-option').forEach(el => el.classList.remove('selected'));
+    document.getElementById('pack-' + size).classList.add('selected');
+    document.getElementById('checkoutBtn').disabled = false;
+  }
+
+  async function startCheckout() {
+    if (!selectedPackSize || !currentEmail) return;
+    const btn = document.getElementById('checkoutBtn');
+    btn.disabled = true;
+    btn.textContent = 'Loading…';
+
+    try {
+      const body = { email: currentEmail, pack_size: selectedPackSize };
+      if (pendingDiscount > 0) body.promo_code = 'RAINBOW-MQ9P'; // discount code
+      const res = await fetch(`${API_BASE}/buy-credits`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Could not start checkout');
+      window.location.href = data.checkout_url;
+    } catch (err) {
+      document.getElementById('paywallError').textContent = err.message;
+      document.getElementById('paywallError').style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Continue to Payment';
+    }
+  }
+
+  // ── Settings ───────────────────────────────────────────────────
+  function openSettings() {
+    document.getElementById('settingsEmail').value = currentEmail;
+    const toggle = document.getElementById('autoRenewToggle');
+    toggle.className = 'toggle-switch' + (currentAutoRenew ? ' on' : '');
+    document.getElementById('settingsSaveMsg').style.display = 'none';
+    document.getElementById('settingsError').style.display = 'none';
+    document.getElementById('settingsModal').classList.add('open');
+  }
+
+  function closeSettings() {
+    document.getElementById('settingsModal').classList.remove('open');
+  }
+
+  function toggleAutoRenew() {
+    const toggle = document.getElementById('autoRenewToggle');
+    currentAutoRenew = !currentAutoRenew;
+    toggle.className = 'toggle-switch' + (currentAutoRenew ? ' on' : '');
+  }
+
+  async function saveSettings() {
+    const newEmail = document.getElementById('settingsEmail').value.trim();
+    if (!newEmail || !newEmail.includes('@')) {
+      document.getElementById('settingsError').textContent = 'Please enter a valid email.';
+      document.getElementById('settingsError').style.display = 'block';
+      return;
+    }
+    try {
+      const body = { email: currentEmail, auto_renew: currentAutoRenew };
+      if (newEmail !== currentEmail) body.new_email = newEmail;
+
+      const res = await fetch(`${API_BASE}/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error('Could not save settings');
+
+      if (newEmail !== currentEmail) {
+        currentEmail = newEmail;
+        saveEmail(newEmail);
+      }
+
+      document.getElementById('settingsError').style.display = 'none';
+      document.getElementById('settingsSaveMsg').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('settingsSaveMsg').style.display = 'none';
+        closeSettings();
+      }, 1500);
+    } catch (err) {
+      document.getElementById('settingsError').textContent = err.message;
+      document.getElementById('settingsError').style.display = 'block';
+    }
+  }
+
+  // ── Check for payment success in URL ──────────────────────────
+  function checkPaymentReturn() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      switchTab('returning', document.getElementById('tab-btn-returning'));
+      history.replaceState({}, '', window.location.pathname);
+    }
+  }
+
+  // ── Drag & Drop ────────────────────────────────────────────────
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('dropZone').classList.add('drag-over');
+  }
+
+  function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('dropZone').classList.remove('drag-over');
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('dropZone').classList.remove('drag-over');
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!file) return;
+    processImageFile(file);
+  }
+
+  // ── File input (click to browse) ───────────────────────────────
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    processImageFile(file);
+  });
+
+  function processImageFile(file) {
+    if (!file.type.startsWith('image/')) {
+      showError('newErrorMsg', 'Please select an image file');
+      return;
+    }
+    selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      document.getElementById('previewImg').src = evt.target.result;
+      document.getElementById('uploadBtnWrap').style.display = 'none';
+      document.getElementById('previewWrap').style.display = 'block';
+      checkReady();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── Form validation ────────────────────────────────────────────
+  function checkReady() {
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('emailInput').value);
+    const petName = document.getElementById('petNameInput').value.trim();
+    document.getElementById('submitBtn').disabled = !(selectedFile && emailValid && petName);
+  }
+
+  // ── Tab switching ──────────────────────────────────────────────
+  function switchTab(tab, btnEl) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    btnEl.classList.add('active');
+  }
+
+  // ── Video polling ──────────────────────────────────────────────
+  async function pollForVideo(jobId, onReady) {
+    for (let i = 0; i < 120; i++) {
+      await new Promise(r => setTimeout(r, 5000));
+      try {
+        const res = await fetch(`${API_BASE}/jobs/${jobId}`, {
+          headers: { 'X-API-Key': API_KEY }
+        });
+        const data = await res.json();
+        if (data.status === 'completed' && data.video_url) {
+          onReady(data.video_url);
+          return;
+        }
+        if (data.status === 'failed') throw new Error('Video generation failed');
+      } catch(e) { /* keep polling */ }
+    }
+    throw new Error('Video generation timed out');
+  }
+
+  function showVideo(videoUrl, videoElId, wrapId, downloadId, shareId) {
+    const videoEl = document.getElementById(videoElId);
+    videoEl.src = videoUrl;
+    document.getElementById(downloadId).href = videoUrl;
+    document.getElementById(shareId).href = videoUrl;
+    document.getElementById(wrapId).style.display = 'block';
+    videoEl.play().catch(() => {});
+  }
+
+  // ── Load history into a grid ───────────────────────────────────
+  async function loadHistory(email, gridId, sectionId) {
+    try {
+      const res = await fetch(`${API_BASE}/history`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+        body: JSON.stringify({ email })
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data.videos || data.videos.length === 0) return;
+
+      const grid = document.getElementById(gridId);
+      grid.innerHTML = '';
+
+      data.videos.forEach(v => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `
+          <video src="${v.video_url}" muted playsinline preload="metadata"></video>
+          <div class="history-item-info">
+            <span class="history-episode">Ep ${v.episode_number} · ${v.episode_name}</span>
+            <span class="history-play">▶ Play</span>
+          </div>
+        `;
+        item.addEventListener('click', () => {
+          openModal(v.video_url, `Episode ${v.episode_number} · ${v.episode_name}`);
+        });
+        grid.appendChild(item);
+      });
+
+      if (sectionId) document.getElementById(sectionId).style.display = 'block';
+      return data;
+    } catch(e) {
+      console.log('History load failed:', e);
+    }
+  }
+
+  // ── Modal ──────────────────────────────────────────────────────
+  function openModal(videoUrl, title) {
+    document.getElementById('modalVideo').src = videoUrl;
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalDownload').href = videoUrl;
+    document.getElementById('modalShare').href = videoUrl;
+    document.getElementById('videoModal').classList.add('open');
+    document.getElementById('modalVideo').play().catch(() => {});
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('videoModal')) closeModalDirect();
+  }
+
+  function closeModalDirect() {
+    document.getElementById('videoModal').classList.remove('open');
+    document.getElementById('modalVideo').pause();
+    document.getElementById('modalVideo').src = '';
+  }
+
+  // ── NEW PET flow ───────────────────────────────────────────────────────────
+  async function submitNewPet() {
+    const email = document.getElementById('emailInput').value.trim();
+    const petName = document.getElementById('petNameInput').value.trim();
+    hideError('newErrorMsg');
+
+    document.getElementById('newFormArea').style.display = 'none';
+    document.getElementById('newLoading').style.display = 'block';
+    document.getElementById('newLoadingStatus').textContent = 'Uploading photo…';
+
+    try {
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.onerror = () => reject(new Error('Failed to read image'));
+        reader.readAsDataURL(selectedFile);
+      });
+
+      const uploadRes = await fetch(`${API_BASE}/uploads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+        body: JSON.stringify({ image_base64: base64 })
+      });
+
+      if (!uploadRes.ok) {
+        const err = await uploadRes.json().catch(() => ({}));
+        throw new Error(err.detail || 'Image upload failed');
+      }
+
+      const { image_url } = await uploadRes.json();
+      document.getElementById('newLoadingStatus').textContent = 'Creating pet profile…';
+
+      const petRes = await fetch(`${API_BASE}/pets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+        body: JSON.stringify({ email, pet_name: petName, image_url })
+      });
+
+      if (!petRes.ok) {
+        const err = await petRes.json().catch(() => ({}));
+        if (err.detail === 'no_credits') {
+          document.getElementById('newLoading').style.display = 'none';
+          document.getElementById('newFormArea').style.display = 'block';
+          currentEmail = email;
+          openPaywall();
+          return;
+        }
+        throw new Error(err.detail || 'Failed to create pet profile');
+      }
+
+      const pet = await petRes.json();
+      updateCreditBadge(pet.credits_remaining ?? 0);
+
+      document.getElementById('newLoadingStatus').textContent = 'Generating your video… (2–3 minutes)';
+      document.getElementById('newLoadingText').textContent = `${petName} is arriving at the bridge…`;
+
+      await pollForVideo(pet.job_id, (videoUrl) => {
+        document.getElementById('newLoading').style.display = 'none';
+        document.getElementById('newSuccess').style.display = 'block';
+        document.getElementById('newSuccessTitle').textContent = `${petName} has arrived 🌈`;
+        document.getElementById('accessCodeDisplay').textContent = pet.access_code;
+        showVideo(videoUrl, 'newVideo', 'newVideoWrap', 'newVideoDownload', 'newVideoShare');
+        saveEmail(email);
+      });
+
+    } catch (err) {
+      document.getElementById('newLoading').style.display = 'none';
+      document.getElementById('newFormArea').style.display = 'block';
+      showError('newErrorMsg', err.message);
+    }
+  }
+
+  // ── RETURNING USER: view history immediately ───────────────────
+  async function viewHistory() {
+    const email = document.getElementById('returningEmail').value.trim();
+    hideError('returningErrorMsg');
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError('returningErrorMsg', 'Please enter a valid email address');
+      return;
+    }
+
+    document.getElementById('returningFormArea').style.display = 'none';
+    document.getElementById('returningLoading').style.display = 'block';
+    document.getElementById('returningLoadingText').textContent = 'Finding your beloved companion…';
+
+    try {
+      const res = await fetch(`${API_BASE}/history`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+        body: JSON.stringify({ email })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || 'No account found with that email address');
+      }
+
+      const data = await res.json();
+      currentEmail = email;
+      currentPetName = data.pet_name;
+      currentAutoRenew = data.auto_renew || false;
+      saveEmail(email);
+
+      updateCreditBadge(data.credits || 0);
+
+      // Populate history grid
+      const grid = document.getElementById('historyGridMain');
+      grid.innerHTML = '';
+
+      if (data.videos && data.videos.length > 0) {
+        data.videos.forEach(v => {
+          const item = document.createElement('div');
+          item.className = 'history-item';
+          item.innerHTML = `
+            <video src="${v.video_url}" muted playsinline preload="metadata"></video>
+            <div class="history-item-info">
+              <span class="history-episode">Ep ${v.episode_number} · ${v.episode_name}</span>
+              <span class="history-play">▶ Play</span>
+            </div>
+          `;
+          item.addEventListener('click', () => {
+            openModal(v.video_url, `Episode ${v.episode_number} · ${v.episode_name}`);
+          });
+          grid.appendChild(item);
+        });
+      } else {
+        grid.innerHTML = '<p style="color:rgba(253,248,240,0.35);font-size:0.85rem;text-align:center;padding:1rem;">No videos yet — generate your first moment!</p>';
+      }
+
+      document.getElementById('returningPetTitle').textContent = `${data.pet_name}'s Memories 🐾`;
+      document.getElementById('returningPetSubtitle').textContent = `${data.videos ? data.videos.length : 0} moment${data.videos && data.videos.length !== 1 ? 's' : ''} saved forever.`;
+
+      document.getElementById('returningLoading').style.display = 'none';
+      document.getElementById('returningHistoryView').style.display = 'block';
+
+    } catch (err) {
+      document.getElementById('returningLoading').style.display = 'none';
+      document.getElementById('returningFormArea').style.display = 'block';
+      showError('returningErrorMsg', err.message);
+    }
+  }
+
+  // ── RETURNING USER: generate new moment ───────────────────────
+  async function submitCheckin() {
+    const email = currentEmail || document.getElementById('returningEmail').value.trim();
+    hideError('returningErrorMsg');
+
+    document.getElementById('returningHistoryView').style.display = 'none';
+    document.getElementById('newMomentLoading').style.display = 'block';
+    document.getElementById('newMomentLoadingText').textContent = `${currentPetName} is on their way…`;
+
+    try {
+      const res = await fetch(`${API_BASE}/checkin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+        body: JSON.stringify({ email })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        if (err.detail === 'no_credits') {
+          document.getElementById('newMomentLoading').style.display = 'none';
+          document.getElementById('returningHistoryView').style.display = 'block';
+          openPaywall();
+          return;
+        }
+        throw new Error(err.detail || 'No account found with that email address');
+      }
+
+      const data = await res.json();
+      currentPetName = data.pet_name;
+      updateCreditBadge(data.credits_remaining ?? 0);
+
+      await pollForVideo(data.job_id, async (videoUrl) => {
+        document.getElementById('newMomentLoading').style.display = 'none';
+        document.getElementById('returningSuccess').style.display = 'block';
+        document.getElementById('returningSuccessTitle').textContent = `A new moment with ${data.pet_name} 🌈`;
+        showVideo(videoUrl, 'returningVideo', 'returningVideoWrap', 'returningVideoDownload', 'returningVideoShare');
+        await loadHistory(email, 'historyGrid', 'historySection');
+      });
+
+    } catch (err) {
+      document.getElementById('newMomentLoading').style.display = 'none';
+      document.getElementById('returningHistoryView').style.display = 'block';
+      showError('returningErrorMsg', err.message);
+    }
+  }
+
+  // ── Reset returning tab ────────────────────────────────────────
+  function resetReturning() {
+    document.getElementById('returningSuccess').style.display = 'none';
+    document.getElementById('returningHistoryView').style.display = 'none';
+    document.getElementById('newMomentLoading').style.display = 'none';
+    document.getElementById('returningFormArea').style.display = 'block';
+    document.getElementById('returningVideo').src = '';
+    document.getElementById('returningVideoWrap').style.display = 'none';
+    document.getElementById('historySection').style.display = 'none';
+    document.getElementById('historyGrid').innerHTML = '';
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.style.display = 'block';
+  }
+
+  function hideError(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  window.addEventListener('load', () => {
+    loadSavedEmail();
+    checkPaymentReturn();
+  });
+</script>
+
+</body>
+</html>
