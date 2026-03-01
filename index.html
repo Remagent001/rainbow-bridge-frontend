@@ -548,6 +548,21 @@
   }
   .settings-close:hover { color: var(--cream); }
   .settings-save-msg { font-size: 0.78rem; color: var(--gold); text-align: center; margin-top: 0.5rem; display: none; }
+
+  /* Share modal */
+  .share-modal { display:none; position:fixed; inset:0; z-index:300; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); padding:1rem; }
+  .share-modal.open { display:flex; }
+  .share-inner { background:#24180f; border:1px solid rgba(201,169,110,0.2); border-radius:12px; padding:2rem 1.5rem; width:100%; max-width:380px; position:relative; }
+  .share-title { font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--gold); margin-bottom:0.4rem; text-align:center; }
+  .share-subtitle { font-size:0.82rem; color:rgba(253,248,240,0.45); text-align:center; margin-bottom:1.5rem; }
+  .share-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1rem; }
+  .share-btn { display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.75rem; border:1px solid rgba(201,169,110,0.25); border-radius:8px; background:rgba(201,169,110,0.06); color:var(--cream); font-family:'Jost',sans-serif; font-size:0.82rem; letter-spacing:0.5px; cursor:pointer; text-decoration:none; transition:background 0.2s; }
+  .share-btn:hover { background:rgba(201,169,110,0.14); }
+  .share-copy-row { display:flex; gap:0.5rem; margin-bottom:1.25rem; }
+  .share-copy-input { flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(201,169,110,0.2); border-radius:6px; color:rgba(253,248,240,0.6); font-size:0.78rem; padding:0.5rem 0.75rem; font-family:'Jost',sans-serif; }
+  .share-copy-btn { background:var(--gold); color:var(--dark); border:none; border-radius:6px; padding:0.5rem 0.9rem; cursor:pointer; font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:400; white-space:nowrap; }
+  .share-close { position:absolute; top:0.9rem; right:1rem; background:none; border:none; color:rgba(253,248,240,0.35); font-size:1.4rem; cursor:pointer; line-height:1; }
+  .share-close:hover { color:var(--cream); }
 </style>
 </head>
 <body>
@@ -567,6 +582,7 @@
     <video id="modalVideo" controls playsinline loop></video>
     <div class="modal-actions">
       <button class="video-btn" id="modalDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
+      <button class="video-btn" id="modalShareBtn" onclick="shareVideo(this.dataset.url, this.dataset.pet)">Share 🔗</button>
       <a class="video-btn" id="modalShare" href="#" target="_blank">Open in Browser</a>
       <button class="video-btn" onclick="closeModalDirect()">← Go Back</button>
     </div>
@@ -726,6 +742,7 @@
           <video id="newVideo" controls playsinline loop></video>
           <div class="video-actions">
             <button class="video-btn" id="newVideoDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
+            <button class="video-btn" id="newVideoShareBtn" onclick="shareVideo(this.dataset.url, this.dataset.pet)">Share 🔗</button>
             <a class="video-btn" id="newVideoShare" href="#" target="_blank">Open in Browser</a>
           </div>
         </div>
@@ -806,6 +823,7 @@
           <video id="returningVideo" controls playsinline loop></video>
           <div class="video-actions">
             <button class="video-btn" id="returningVideoDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
+            <button class="video-btn" id="returningVideoShareBtn" onclick="shareVideo(this.dataset.url, this.dataset.pet)">Share 🔗</button>
             <a class="video-btn" id="returningVideoShare" href="#" target="_blank">Open in Browser</a>
           </div>
         </div>
@@ -845,6 +863,25 @@
     </div>
     <div style="text-align:center;">
       <button onclick="closePoem()" style="background:none;border:1px solid rgba(201,169,110,0.3);color:var(--gold);padding:0.6rem 1.5rem;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.85rem;letter-spacing:1px;">← Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- Share modal -->
+<div class="share-modal" id="shareModal">
+  <div class="share-inner">
+    <button class="share-close" onclick="closeShareModal()">✕</button>
+    <p class="share-title">Share This Memory</p>
+    <p class="share-subtitle">Help others give their companions a tribute too</p>
+    <div class="share-copy-row">
+      <input class="share-copy-input" id="shareLinkInput" readonly>
+      <button class="share-copy-btn" onclick="copyShareLink()">Copy</button>
+    </div>
+    <div class="share-grid">
+      <a class="share-btn" id="shareEmail" href="#">✉️ Email</a>
+      <a class="share-btn" id="shareSMS" href="#">💬 Text / SMS</a>
+      <a class="share-btn" id="shareTwitter" href="#" target="_blank">𝕏 Twitter / X</a>
+      <a class="share-btn" id="shareFacebook" href="#" target="_blank">📘 Facebook</a>
     </div>
   </div>
 </div>
@@ -1093,11 +1130,16 @@
     throw new Error('Video generation timed out');
   }
 
-  function showVideo(videoUrl, videoElId, wrapId, downloadId, shareId) {
+  function showVideo(videoUrl, videoElId, wrapId, downloadId, shareId, shareBtnId) {
     const videoEl = document.getElementById(videoElId);
     videoEl.src = videoUrl;
     document.getElementById(downloadId).dataset.url = videoUrl;
     document.getElementById(shareId).href = videoUrl;
+    if (shareBtnId) {
+      const sb = document.getElementById(shareBtnId);
+      sb.dataset.url = videoUrl;
+      sb.dataset.pet = currentPetName;
+    }
     document.getElementById(wrapId).style.display = 'block';
     videoEl.play().catch(() => {});
   }
@@ -1148,6 +1190,9 @@
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalDownload').dataset.url = videoUrl;
     document.getElementById('modalShare').href = videoUrl;
+    const msb = document.getElementById('modalShareBtn');
+    msb.dataset.url = videoUrl;
+    msb.dataset.pet = currentPetName;
     document.getElementById('videoModal').classList.add('open');
     document.getElementById('modalVideo').play().catch(() => {});
   }
@@ -1160,6 +1205,49 @@
     document.getElementById('videoModal').classList.remove('open');
     document.getElementById('modalVideo').pause();
     document.getElementById('modalVideo').src = '';
+  }
+
+  async function shareVideo(videoUrl, petName) {
+    const pet = petName || currentPetName || 'my pet';
+    const siteUrl = 'https://theywaitwithlove.com';
+    const text = `${pet} is waiting at the Rainbow Bridge 🌈\n\nI created a memorial video to celebrate their life. You can create one for your beloved companion too.\n\n${siteUrl}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `${pet}'s Rainbow Bridge Memorial`, text, url: siteUrl });
+        return;
+      } catch(e) {
+        if (e.name === 'AbortError') return;
+      }
+    }
+    openShareModal(videoUrl, pet, text, siteUrl);
+  }
+
+  function openShareModal(videoUrl, petName, text, siteUrl) {
+    const encoded = encodeURIComponent(text);
+    const encodedUrl = encodeURIComponent(siteUrl);
+    document.getElementById('shareLinkInput').value = siteUrl;
+    document.getElementById('shareEmail').href =
+      `mailto:?subject=${encodeURIComponent(petName + "'s Rainbow Bridge Memorial")}&body=${encoded}`;
+    document.getElementById('shareSMS').href = `sms:?&body=${encoded}`;
+    document.getElementById('shareTwitter').href =
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(petName + ' is waiting at the Rainbow Bridge 🌈 Create a memorial video for your companion:')}&url=${encodedUrl}`;
+    document.getElementById('shareFacebook').href =
+      `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+    document.getElementById('shareModal').classList.add('open');
+  }
+
+  function closeShareModal() {
+    document.getElementById('shareModal').classList.remove('open');
+  }
+
+  function copyShareLink() {
+    const input = document.getElementById('shareLinkInput');
+    navigator.clipboard.writeText(input.value).then(() => {
+      const btn = document.querySelector('.share-copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
   }
 
   function openPoem() {
@@ -1258,7 +1346,7 @@
         document.getElementById('newLoading').style.display = 'none';
         document.getElementById('newSuccess').style.display = 'block';
         document.getElementById('newSuccessTitle').textContent = `${petName} has arrived 🌈`;
-        showVideo(videoUrl, 'newVideo', 'newVideoWrap', 'newVideoDownload', 'newVideoShare');
+        showVideo(videoUrl, 'newVideo', 'newVideoWrap', 'newVideoDownload', 'newVideoShare', 'newVideoShareBtn');
         saveEmail(email);
       });
 
@@ -1375,7 +1463,7 @@
         document.getElementById('newMomentLoading').style.display = 'none';
         document.getElementById('returningSuccess').style.display = 'block';
         document.getElementById('returningSuccessTitle').textContent = `A new moment with ${data.pet_name} 🌈`;
-        showVideo(videoUrl, 'returningVideo', 'returningVideoWrap', 'returningVideoDownload', 'returningVideoShare');
+        showVideo(videoUrl, 'returningVideo', 'returningVideoWrap', 'returningVideoDownload', 'returningVideoShare', 'returningVideoShareBtn');
         await loadHistory(email, 'historyGrid', 'historySection');
       });
 
