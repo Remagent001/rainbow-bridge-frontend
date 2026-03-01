@@ -747,6 +747,10 @@
           </div>
         </div>
 
+        <div style="margin-top:2rem;text-align:center;">
+          <button class="submit-btn" type="button" onclick="generateAnotherMemory()">Generate Another Memory ✨</button>
+        </div>
+
       </div>
     </div>
 
@@ -1261,29 +1265,33 @@
 
   function playWithLoop(videoEl, times) {
     times = times || 4;
-    let count = 0;
-    videoEl.removeEventListener('ended', videoEl._loopHandler);
-    videoEl._loopHandler = function() {
-      count++;
-      if (count < times) {
+    videoEl.dataset.loopCount = '0';
+    videoEl.dataset.maxLoops = String(times);
+    videoEl.onended = function() {
+      var count = parseInt(videoEl.dataset.loopCount) + 1;
+      videoEl.dataset.loopCount = String(count);
+      if (count < parseInt(videoEl.dataset.maxLoops)) {
         videoEl.currentTime = 0;
         videoEl.play().catch(function(){});
       }
     };
-    videoEl.addEventListener('ended', videoEl._loopHandler);
+    videoEl.currentTime = 0;
     videoEl.play().catch(function(){});
   }
 
   async function downloadVideo(url) {
     if (!url) return;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isIOS) {
-      window.open(url, '_blank');
-      return;
-    }
     try {
       const res = await fetch(url);
       const blob = await res.blob();
+      if (isIOS && navigator.canShare) {
+        const file = new File([blob], 'rainbow-bridge-memory.mp4', { type: 'video/mp4' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: 'Rainbow Bridge Memory' });
+          return;
+        }
+      }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = 'rainbow-bridge-memory.mp4';
@@ -1294,6 +1302,11 @@
     } catch {
       window.open(url, '_blank');
     }
+  }
+
+  function generateAnotherMemory() {
+    switchTab('returning', document.getElementById('tab-btn-returning'));
+    submitCheckin();
   }
 
   function goToMemories() {
@@ -1366,6 +1379,7 @@
         document.getElementById('newLoading').style.display = 'none';
         document.getElementById('newSuccess').style.display = 'block';
         document.getElementById('newSuccessTitle').textContent = `${petName} has arrived 🌈`;
+        currentPetName = petName;
         showVideo(videoUrl, 'newVideo', 'newVideoWrap', 'newVideoDownload', 'newVideoShare', 'newVideoShareBtn');
         saveEmail(email);
       });
