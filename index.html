@@ -936,13 +936,8 @@
     }
 
     if (generateBtn && noCreditsMsg) {
-      if (credits > 0) {
-        generateBtn.style.display = 'block';
-        noCreditsMsg.style.display = 'none';
-      } else {
-        generateBtn.style.display = 'none';
-        noCreditsMsg.style.display = 'block';
-      }
+      generateBtn.style.display = 'block';
+      noCreditsMsg.style.display = credits > 0 ? 'none' : 'block';
     }
   }
 
@@ -1288,6 +1283,11 @@
       if (isIOS && navigator.canShare) {
         const file = new File([blob], 'rainbow-bridge-memory.mp4', { type: 'video/mp4' });
         if (navigator.canShare({ files: [file] })) {
+          const tip = document.createElement('div');
+          tip.textContent = 'In the share sheet, tap "Save Video" to save to your photos';
+          tip.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:rgba(30,20,10,0.95);color:#e8d5a3;padding:12px 20px;border-radius:10px;font-size:13px;z-index:9999;max-width:88%;text-align:center;border:1px solid rgba(201,169,110,0.4);';
+          document.body.appendChild(tip);
+          setTimeout(() => tip.remove(), 6000);
           await navigator.share({ files: [file], title: 'Rainbow Bridge Memory' });
           return;
         }
