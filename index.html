@@ -564,10 +564,11 @@
       <span class="modal-title" id="modalTitle"></span>
       <button class="modal-close" onclick="closeModalDirect()">✕</button>
     </div>
-    <video id="modalVideo" controls playsinline></video>
+    <video id="modalVideo" controls playsinline loop></video>
     <div class="modal-actions">
-      <a class="video-btn" id="modalDownload" href="#" download>Download</a>
+      <button class="video-btn" id="modalDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
       <a class="video-btn" id="modalShare" href="#" target="_blank">Open in Browser</a>
+      <button class="video-btn" onclick="closeModalDirect()">← Go Back</button>
     </div>
   </div>
 </div>
@@ -641,6 +642,7 @@
     <span class="rainbow-emoji">🌈</span>
     <h1>A Tribute Across<br>the Rainbow Bridge</h1>
     <p class="subtitle">A place where joy returns, tails wag again,<br>and love never fades.</p>
+    <p style="margin-top:0.75rem;"><a onclick="openPoem()" style="cursor:pointer;color:var(--gold);font-size:0.8rem;opacity:0.7;letter-spacing:1px;">Read the poem</a></p>
   </div>
 
   <div class="form-card">
@@ -680,6 +682,20 @@
         </div>
 
         <div class="input-group">
+          <label for="petBreedInput">Breed <span style="opacity:0.5;font-size:0.8em;">(optional)</span></label>
+          <input type="text" id="petBreedInput" placeholder="Golden Retriever, Mixed breed…">
+        </div>
+
+        <div class="input-group">
+          <label for="petSexInput">Sex <span style="opacity:0.5;font-size:0.8em;">(optional)</span></label>
+          <select id="petSexInput">
+            <option value="">Prefer not to say</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
+        <div class="input-group">
           <label for="emailInput">Your email address</label>
           <input type="email" id="emailInput" placeholder="your@email.com" oninput="checkReady(); saveEmail(this.value)">
         </div>
@@ -687,6 +703,10 @@
         <button class="submit-btn" id="submitBtn" type="button" onclick="submitNewPet()" disabled>
           Create Memorial
         </button>
+
+        <p style="text-align:center;margin-top:1rem;">
+          <a onclick="goToMemories()" style="cursor:pointer;color:var(--gold);font-size:0.85rem;opacity:0.8;">Already have memories? See them here →</a>
+        </p>
 
         <div class="error-msg" id="newErrorMsg"></div>
       </div>
@@ -703,17 +723,13 @@
         <p>We've also sent this video to your email.</p>
 
         <div class="video-wrap" id="newVideoWrap">
-          <video id="newVideo" controls playsinline></video>
+          <video id="newVideo" controls playsinline loop></video>
           <div class="video-actions">
-            <a class="video-btn" id="newVideoDownload" href="#" download>Download</a>
+            <button class="video-btn" id="newVideoDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
             <a class="video-btn" id="newVideoShare" href="#" target="_blank">Open in Browser</a>
           </div>
         </div>
 
-        <div class="access-code">
-          <div class="access-code-label">Your Access Code</div>
-          <div class="access-code-value" id="accessCodeDisplay"></div>
-        </div>
       </div>
     </div>
 
@@ -787,9 +803,9 @@
         <p>We've also sent this video to your email.</p>
 
         <div class="video-wrap" id="returningVideoWrap">
-          <video id="returningVideo" controls playsinline></video>
+          <video id="returningVideo" controls playsinline loop></video>
           <div class="video-actions">
-            <a class="video-btn" id="returningVideoDownload" href="#" download>Download</a>
+            <button class="video-btn" id="returningVideoDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
             <a class="video-btn" id="returningVideoShare" href="#" target="_blank">Open in Browser</a>
           </div>
         </div>
@@ -808,8 +824,29 @@
 
   <p class="footer-note">
     Your photo and email are used only to create your memorial video.<br>
-    We handle your memories with care and respect.
+    We handle your memories with care and respect.<br>
+    <a onclick="openPoem()" style="cursor:pointer;color:var(--gold);font-size:0.85em;opacity:0.8;">Read the poem →</a>
   </p>
+</div>
+
+<!-- Poem overlay -->
+<div id="poemOverlay" style="display:none;position:fixed;inset:0;z-index:200;background:var(--dark);overflow-y:auto;padding:3rem 1.5rem;">
+  <div style="max-width:540px;margin:0 auto;">
+    <button onclick="closePoem()" style="background:none;border:1px solid rgba(201,169,110,0.3);color:var(--gold);padding:0.5rem 1.2rem;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.85rem;letter-spacing:1px;margin-bottom:2.5rem;">← Back</button>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;color:var(--gold);font-size:1.8rem;margin-bottom:0.5rem;text-align:center;">Rainbow Bridge</h2>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(253,248,240,0.4);text-align:center;margin-bottom:2.5rem;font-size:0.9rem;">Author unknown</p>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;line-height:1.9;color:rgba(253,248,240,0.85);">
+      <p style="margin-bottom:1.5rem;">Just this side of heaven is a place called Rainbow Bridge.</p>
+      <p style="margin-bottom:1.5rem;">When an animal dies that has been especially close to someone here, that pet goes to Rainbow Bridge. There are meadows and hills for all of our special friends so they can run and play together. There is plenty of food, water and sunshine, and our friends are warm and comfortable.</p>
+      <p style="margin-bottom:1.5rem;">All the animals who had been ill and old are restored to health and vigor. Those who were hurt or maimed are made whole and strong again, just as we remember them in our dreams of days and times gone by. The animals are happy and content, except for one small thing; they each miss someone very special to them, who had to be left behind.</p>
+      <p style="margin-bottom:1.5rem;">They all run and play together, but the day comes when one suddenly stops and looks into the distance. His bright eyes are intent. His eager body quivers. Suddenly he begins to run from the group, flying over the green grass, his legs carrying him faster and faster.</p>
+      <p style="margin-bottom:1.5rem;">You have been spotted, and when you and your special friend finally meet, you cling together in joyous reunion, never to be parted again. The happy kisses rain upon your face; your hands again caress the beloved head, and you look once more into the trusting eyes of your pet, so long gone from your life but never absent from your heart.</p>
+      <p style="margin-bottom:2.5rem;">Then you cross Rainbow Bridge together….</p>
+    </div>
+    <div style="text-align:center;">
+      <button onclick="closePoem()" style="background:none;border:1px solid rgba(201,169,110,0.3);color:var(--gold);padding:0.6rem 1.5rem;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.85rem;letter-spacing:1px;">← Back</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1059,7 +1096,7 @@
   function showVideo(videoUrl, videoElId, wrapId, downloadId, shareId) {
     const videoEl = document.getElementById(videoElId);
     videoEl.src = videoUrl;
-    document.getElementById(downloadId).href = videoUrl;
+    document.getElementById(downloadId).dataset.url = videoUrl;
     document.getElementById(shareId).href = videoUrl;
     document.getElementById(wrapId).style.display = 'block';
     videoEl.play().catch(() => {});
@@ -1090,6 +1127,8 @@
             <span class="history-play">▶ Play</span>
           </div>
         `;
+        const vid = item.querySelector('video');
+        vid.addEventListener('loadedmetadata', () => { vid.currentTime = vid.duration; });
         item.addEventListener('click', () => {
           openModal(v.video_url, `Episode ${v.episode_number} · ${v.episode_name}`);
         });
@@ -1107,7 +1146,7 @@
   function openModal(videoUrl, title) {
     document.getElementById('modalVideo').src = videoUrl;
     document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalDownload').href = videoUrl;
+    document.getElementById('modalDownload').dataset.url = videoUrl;
     document.getElementById('modalShare').href = videoUrl;
     document.getElementById('videoModal').classList.add('open');
     document.getElementById('modalVideo').play().catch(() => {});
@@ -1123,10 +1162,46 @@
     document.getElementById('modalVideo').src = '';
   }
 
+  function openPoem() {
+    document.getElementById('poemOverlay').style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function closePoem() {
+    document.getElementById('poemOverlay').style.display = 'none';
+  }
+
+  async function downloadVideo(url) {
+    if (!url) return;
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'rainbow-bridge-memory.mp4';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    } catch {
+      window.open(url, '_blank');
+    }
+  }
+
+  function goToMemories() {
+    switchTab('returning', document.getElementById('tab-btn-returning'));
+    if (currentEmail) {
+      document.getElementById('returningEmail').value = currentEmail;
+      viewHistory();
+    }
+  }
+
   // ── NEW PET flow ───────────────────────────────────────────────────────────
   async function submitNewPet() {
     const email = document.getElementById('emailInput').value.trim();
     const petName = document.getElementById('petNameInput').value.trim();
+    const petBreed = document.getElementById('petBreedInput').value.trim();
+    const petSex = document.getElementById('petSexInput').value;
     hideError('newErrorMsg');
 
     document.getElementById('newFormArea').style.display = 'none';
@@ -1158,7 +1233,7 @@
       const petRes = await fetch(`${API_BASE}/pets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
-        body: JSON.stringify({ email, pet_name: petName, image_url })
+        body: JSON.stringify({ email, pet_name: petName, image_url, breed: petBreed || null, sex: petSex || null })
       });
 
       if (!petRes.ok) {
@@ -1183,7 +1258,6 @@
         document.getElementById('newLoading').style.display = 'none';
         document.getElementById('newSuccess').style.display = 'block';
         document.getElementById('newSuccessTitle').textContent = `${petName} has arrived 🌈`;
-        document.getElementById('accessCodeDisplay').textContent = pet.access_code;
         showVideo(videoUrl, 'newVideo', 'newVideoWrap', 'newVideoDownload', 'newVideoShare');
         saveEmail(email);
       });
