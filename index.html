@@ -579,7 +579,7 @@
       <span class="modal-title" id="modalTitle"></span>
       <button class="modal-close" onclick="closeModalDirect()">✕</button>
     </div>
-    <video id="modalVideo" controls playsinline loop></video>
+    <video id="modalVideo" controls playsinline></video>
     <div class="modal-actions">
       <button class="video-btn" id="modalDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
       <button class="video-btn" id="modalShareBtn" onclick="shareVideo(this.dataset.url, this.dataset.pet)">Share 🔗</button>
@@ -705,7 +705,7 @@
         <div class="input-group">
           <label for="petSexInput">Sex <span style="opacity:0.5;font-size:0.8em;">(optional)</span></label>
           <select id="petSexInput">
-            <option value="">Prefer not to say</option>
+            <option value="">Unknown</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
@@ -739,7 +739,7 @@
         <p>We've also sent this video to your email.</p>
 
         <div class="video-wrap" id="newVideoWrap">
-          <video id="newVideo" controls playsinline loop></video>
+          <video id="newVideo" controls playsinline></video>
           <div class="video-actions">
             <button class="video-btn" id="newVideoDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
             <button class="video-btn" id="newVideoShareBtn" onclick="shareVideo(this.dataset.url, this.dataset.pet)">Share 🔗</button>
@@ -820,7 +820,7 @@
         <p>We've also sent this video to your email.</p>
 
         <div class="video-wrap" id="returningVideoWrap">
-          <video id="returningVideo" controls playsinline loop></video>
+          <video id="returningVideo" controls playsinline></video>
           <div class="video-actions">
             <button class="video-btn" id="returningVideoDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
             <button class="video-btn" id="returningVideoShareBtn" onclick="shareVideo(this.dataset.url, this.dataset.pet)">Share 🔗</button>
@@ -1141,7 +1141,7 @@
       sb.dataset.pet = currentPetName;
     }
     document.getElementById(wrapId).style.display = 'block';
-    videoEl.play().catch(() => {});
+    playWithLoop(videoEl, 4);
   }
 
   // ── Load history into a grid ───────────────────────────────────
@@ -1194,7 +1194,7 @@
     msb.dataset.url = videoUrl;
     msb.dataset.pet = currentPetName;
     document.getElementById('videoModal').classList.add('open');
-    document.getElementById('modalVideo').play().catch(() => {});
+    playWithLoop(document.getElementById('modalVideo'), 4);
   }
 
   function closeModal(e) {
@@ -1259,8 +1259,28 @@
     document.getElementById('poemOverlay').style.display = 'none';
   }
 
+  function playWithLoop(videoEl, times) {
+    times = times || 4;
+    let count = 0;
+    videoEl.removeEventListener('ended', videoEl._loopHandler);
+    videoEl._loopHandler = function() {
+      count++;
+      if (count < times) {
+        videoEl.currentTime = 0;
+        videoEl.play().catch(function(){});
+      }
+    };
+    videoEl.addEventListener('ended', videoEl._loopHandler);
+    videoEl.play().catch(function(){});
+  }
+
   async function downloadVideo(url) {
     if (!url) return;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      window.open(url, '_blank');
+      return;
+    }
     try {
       const res = await fetch(url);
       const blob = await res.blob();
