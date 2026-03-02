@@ -1204,11 +1204,15 @@
       videoEl.style.display = 'none';
       errorEl.style.display = 'block';
     };
-    videoEl.oncanplay = function() {
-      videoEl.oncanplay = null;
-      playWithLoop(videoEl, 4);
-    };
     videoEl.load();
+    videoEl.play().catch(() => {});
+    // Fallback: if nothing happens after 8 seconds, show the direct link
+    setTimeout(() => {
+      if (videoEl.readyState === 0 && videoEl.style.display !== 'none') {
+        videoEl.style.display = 'none';
+        errorEl.style.display = 'block';
+      }
+    }, 8000);
   }
 
   function closeModal(e) {
