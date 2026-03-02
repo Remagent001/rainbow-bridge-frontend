@@ -580,7 +580,11 @@
       <span class="modal-title" id="modalTitle"></span>
       <button class="modal-close" onclick="closeModalDirect()">✕</button>
     </div>
-    <video id="modalVideo" controls playsinline></video>
+    <video id="modalVideo" controls playsinline webkit-playsinline></video>
+    <div id="modalVideoError" style="display:none;padding:1rem;text-align:center;">
+      <p style="font-size:0.82rem;color:rgba(253,248,240,0.5);margin-bottom:0.75rem;">Video couldn't load in the player.</p>
+      <a id="modalVideoFallback" href="#" target="_blank" style="display:inline-block;padding:0.6rem 1.2rem;border:1px solid rgba(201,169,110,0.4);color:var(--gold);font-size:0.78rem;letter-spacing:0.1em;text-decoration:none;">Tap to Open Video ↗</a>
+    </div>
     <div class="modal-actions">
       <button class="video-btn" id="modalDownload" onclick="downloadVideo(this.dataset.url)">Download</button>
       <button class="video-btn" id="modalShareBtn" onclick="shareVideo(this.dataset.url, this.dataset.pet)">Share 🔗</button>
@@ -1183,15 +1187,27 @@
 
   // ── Modal ──────────────────────────────────────────────────────
   function openModal(videoUrl, title) {
-    document.getElementById('modalVideo').src = videoUrl;
+    const videoEl = document.getElementById('modalVideo');
+    const errorEl = document.getElementById('modalVideoError');
+    errorEl.style.display = 'none';
+    videoEl.style.display = 'block';
+    videoEl.src = videoUrl;
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalDownload').dataset.url = videoUrl;
-    document.getElementById('modalShare').href = videoUrl;
+    document.getElementById('modalVideoFallback').href = videoUrl;
     const msb = document.getElementById('modalShareBtn');
     msb.dataset.url = videoUrl;
     msb.dataset.pet = currentPetName;
     document.getElementById('videoModal').classList.add('open');
-    playWithLoop(document.getElementById('modalVideo'), 4);
+    videoEl.onerror = function() {
+      videoEl.style.display = 'none';
+      errorEl.style.display = 'block';
+    };
+    videoEl.oncanplay = function() {
+      videoEl.oncanplay = null;
+      playWithLoop(videoEl, 4);
+    };
+    videoEl.load();
   }
 
   function closeModal(e) {
