@@ -1163,15 +1163,14 @@
       data.videos.forEach(v => {
         const item = document.createElement('div');
         item.className = 'history-item';
+        const poster = data.pet_image ? ` poster="${data.pet_image}"` : '';
         item.innerHTML = `
-          <video src="${v.video_url}" muted playsinline preload="metadata"></video>
+          <video src="${v.video_url}" muted playsinline preload="none"${poster}></video>
           <div class="history-item-info">
             <span class="history-episode">Ep ${v.episode_number} · ${v.episode_name}</span>
             <span class="history-play">▶ Play</span>
           </div>
         `;
-        const vid = item.querySelector('video');
-        vid.addEventListener('loadedmetadata', () => { vid.currentTime = vid.duration; });
         item.addEventListener('click', () => {
           openModal(v.video_url, `Episode ${v.episode_number} · ${v.episode_name}`);
         });
@@ -1447,8 +1446,9 @@
         data.videos.forEach(v => {
           const item = document.createElement('div');
           item.className = 'history-item';
+          const poster = data.pet_image ? ` poster="${data.pet_image}"` : '';
           item.innerHTML = `
-            <video src="${v.video_url}" muted playsinline preload="metadata"></video>
+            <video src="${v.video_url}" muted playsinline preload="none"${poster}></video>
             <div class="history-item-info">
               <span class="history-episode">Ep ${v.episode_number} · ${v.episode_name}</span>
               <span class="history-play">▶ Play</span>
