@@ -1131,18 +1131,18 @@
     throw new Error('Video generation timed out');
   }
 
-  function showVideo(videoUrl, videoElId, wrapId, downloadId, shareId, shareBtnId) {
+  function showVideo(videoUrl, videoElId, wrapId, downloadId, shareBtnId) {
     const videoEl = document.getElementById(videoElId);
     videoEl.src = videoUrl;
     document.getElementById(downloadId).dataset.url = videoUrl;
-    document.getElementById(shareId).href = videoUrl;
-    if (shareBtnId) {
-      const sb = document.getElementById(shareBtnId);
-      sb.dataset.url = videoUrl;
-      sb.dataset.pet = currentPetName;
+    const shareBtn = shareBtnId ? document.getElementById(shareBtnId) : null;
+    if (shareBtn) {
+      shareBtn.dataset.url = videoUrl;
+      shareBtn.dataset.pet = currentPetName;
     }
     document.getElementById(wrapId).style.display = 'block';
-    playWithLoop(videoEl, 4);
+    videoEl.load();
+    videoEl.play().catch(() => {});
   }
 
   // ── Load history into a grid ───────────────────────────────────
@@ -1399,7 +1399,7 @@
         document.getElementById('newSuccess').style.display = 'block';
         document.getElementById('newSuccessTitle').textContent = `${petName} has arrived 🌈`;
         currentPetName = petName;
-        showVideo(videoUrl, 'newVideo', 'newVideoWrap', 'newVideoDownload', 'newVideoShare', 'newVideoShareBtn');
+        showVideo(videoUrl, 'newVideo', 'newVideoWrap', 'newVideoDownload', 'newVideoShareBtn');
         saveEmail(email);
       });
 
@@ -1519,7 +1519,7 @@
         document.getElementById('newMomentLoading').style.display = 'none';
         document.getElementById('returningSuccess').style.display = 'block';
         document.getElementById('returningSuccessTitle').textContent = `A new moment with ${data.pet_name} 🌈`;
-        showVideo(videoUrl, 'returningVideo', 'returningVideoWrap', 'returningVideoDownload', 'returningVideoShare', 'returningVideoShareBtn');
+        showVideo(videoUrl, 'returningVideo', 'returningVideoWrap', 'returningVideoDownload', 'returningVideoShareBtn');
         await loadHistory(email, 'historyGrid', 'historySection');
       });
 
