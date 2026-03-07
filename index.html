@@ -716,6 +716,18 @@
         </div>
 
         <div class="input-group">
+          <label>Video orientation</label>
+          <div style="display:flex;gap:1rem;margin-top:0.3rem;">
+            <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.95rem;">
+              <input type="radio" name="orientation" value="portrait" checked style="accent-color:var(--gold);"> Portrait (vertical)
+            </label>
+            <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.95rem;">
+              <input type="radio" name="orientation" value="landscape" style="accent-color:var(--gold);"> Landscape (horizontal)
+            </label>
+          </div>
+        </div>
+
+        <div class="input-group">
           <label for="emailInput">Your email address</label>
           <input type="email" id="emailInput" placeholder="your@email.com" oninput="checkReady(); saveEmail(this.value)">
         </div>
@@ -1342,6 +1354,7 @@
     const petName = document.getElementById('petNameInput').value.trim();
     const petBreed = document.getElementById('petBreedInput').value.trim();
     const petSex = document.getElementById('petSexInput').value;
+    const orientation = document.querySelector('input[name="orientation"]:checked').value;
     hideError('newErrorMsg');
 
     document.getElementById('newFormArea').style.display = 'none';
@@ -1373,7 +1386,7 @@
       const petRes = await fetch(`${API_BASE}/pets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY, 'X-Fingerprint': deviceFingerprint || '' },
-        body: JSON.stringify({ email, pet_name: petName, image_url, breed: petBreed || null, sex: petSex || null })
+        body: JSON.stringify({ email, pet_name: petName, image_url, breed: petBreed || null, sex: petSex || null, orientation })
       });
 
       if (!petRes.ok) {
